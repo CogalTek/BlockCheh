@@ -1,0 +1,28 @@
+# Build stage
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npx prisma generate
+RUN npm run build
+
+# Production stage
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/.output /app/.output
+# Optional: Copy prisma if needed for runtime migrations, though usually done in CI or init container
+COPY --from=builder /app/prisma /app/prisma
+COPY --from=builder /app/package.json /app/package.json
+
+ENV NUXT_HOST=0.0.0.0
+ENV NUXT_PORT=3000
+
+EXPOSE 3000
+
+CMD ["node", ".output/server/index.mjs"]
