@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "NODE_OPTIONS='--max-old-space-size=4096' nuxt dev",
-    "generate": "nuxt generate",
+    "dev": "nuxt dev",
+    "init": "docker-compose up -d && npm install && npx prisma migrate dev --name init && npx prisma generate && npm run dev",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
