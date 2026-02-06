@@ -1,6 +1,6 @@
 <template>
     <div class="container text-center">
-        <h1 class="mt-5">Bienvenue sur Damgwenn</h1>
+        <h1 class="mt-5">Bienvenue sur blockcheh</h1>
     </div>
 </template>
 

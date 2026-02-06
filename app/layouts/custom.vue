@@ -1,6 +1,6 @@
 <template>
     <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
-        <h1>Damgwenn</h1>
+        <h1>blockcheh</h1>
         <div>
             <nuxt-link to="/api/auth/login" external v-if="!isAuthenticated">
                 <button class="btn btn-primary">Se connecter</button>

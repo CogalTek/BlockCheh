@@ -1,5 +1,5 @@
 {
-  "name": "damgwenn",
+  "name": "blockcheh",
   "type": "module",
   "private": true,
   "scripts": {
@@ -21,7 +21,8 @@
     "pg": "^8.17.2",
     "tsx": "^4.21.0",
     "vue": "^3.5.27",
-    "vue-router": "^4.6.4"
+    "vue-router": "^4.6.4",
+    "xrpl": "^4.5.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.10",
