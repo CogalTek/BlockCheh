@@ -9,7 +9,7 @@ export const setupIssuerCompliance = async (seed: string) => {
     const settingsTx: AccountSet = {
         TransactionType: "AccountSet",
         Account: wallet.address,
-        SetFlag: AccountSetAsfFlags.asfRequireAuth, // La clé de la compliance 
+        SetFlag: AccountSetAsfFlags.asfRequireAuth,
     }
 
     const prepared = await client.autofill(settingsTx)
