@@ -18,4 +18,16 @@ export default defineNuxtConfig({
       wasm: true,
     }
   },
+  modules: [
+    '@nuxt/eslint'
+  ],
+  eslint: {
+    config: {
+      stylistic: {
+        indent: 4,
+        semi: true, // Enable semicolons
+        quotes: 'single'
+      }
+    }
+  }
 })
