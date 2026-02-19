@@ -38,6 +38,10 @@
                     <i class="bi bi-gear"></i>
                     <span>Paramètres</span>
                 </nuxt-link>
+                <nuxt-link v-if="isAdmin" to="/administration" class="nav-item admin-nav" active-class="active">
+                    <i class="bi bi-shield-lock"></i>
+                    <span>Administration</span>
+                </nuxt-link>
                 <nuxt-link to="/docs" class="nav-item" active-class="active">
                     <i class="bi bi-book"></i>
                     <span>Documentation</span>
@@ -438,14 +442,16 @@
 </style>
 
 <script setup>
-	import { ref } from 'vue'
+import { ref } from 'vue'
 
-	const { isAuthenticated, user, refresh } = useAuth();
-	const sidebarOpen = ref(false);
+const { isAuthenticated, user, permission, refresh } = useAuth();
+const sidebarOpen = ref(false);
 
-	const userFetched = ref(null);
+const isAdmin = computed(() => permission.value === 'ADMIN' || permission.value === 'SUPERADMIN');
 
-	const userApply = async () => {
-		userFetched.value = await $fetch('/api/user').catch(() => null);
-	}
+const userFetched = ref(null);
+
+const userApply = async () => {
+    userFetched.value = await $fetch('/api/user').catch(() => null);
+}
 </script>

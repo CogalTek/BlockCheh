@@ -19,6 +19,12 @@ enum Role {
   SUPERADMIN
 }
 
+enum KycStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model UserMeta {
   id       Int    @id @default(autoincrement())
   userId   Int    @unique
@@ -27,15 +33,78 @@ model UserMeta {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  idKinde   String    @unique @default("")
-  email     String    @unique
-  name      String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  userMeta  UserMeta?
-  walletAddress String? @unique
-  isWhitelisted Boolean @default(false)
-  role      Role      @default(USER)
+  id            Int           @id @default(autoincrement())
+  idKinde       String        @unique @default("")
+  email         String        @unique
+  name          String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  userMeta      UserMeta?
+  walletAddress String?       @unique
+  walletSeed    String?
+  isWhitelisted Boolean       @default(false)
+  isBlacklisted Boolean       @default(false)
+  role          Role          @default(USER)
+  kycRequest    KycRequest?
+  nfts          NftAsset[]    @relation("OwnedNfts")
+  transactions  Transaction[]
 }
 
+model KycRequest {
+  id         Int       @id @default(autoincrement())
+  userId     Int       @unique
+  user       User      @relation(fields: [userId], references: [id])
+  fullName   String
+  documentId String
+  status     KycStatus @default(PENDING)
+  reviewedBy Int?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model NftAsset {
+  id          Int      @id @default(autoincrement())
+  nftokenId   String   @unique
+  name        String
+  description String?
+  imageUrl    String?
+  category    String   @default("historique")
+  mintedBy    Int
+  ownerId     Int?
+  owner       User?    @relation("OwnedNfts", fields: [ownerId], references: [id])
+  priceXrp    String?
+  xrplTxHash  String?
+  createdAt   DateTime @default(now())
+}
+
+model FungibleToken {
+  id            Int      @id @default(autoincrement())
+  currencyCode  String   @unique
+  name          String
+  totalSupply   String
+  issuerAddress String
+  description   String?
+  createdAt     DateTime @default(now())
+}
+
+model Transaction {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+  type         String
+  assetType    String
+  assetId      String
+  amount       String
+  xrplTxHash   String?  @unique
+  counterparty String?
+  createdAt    DateTime @default(now())
+}
+
+model OraclePrice {
+  id        Int      @id @default(autoincrement())
+  asset     String
+  priceXrp  String
+  priceEur  String
+  source    String
+  timestamp DateTime @default(now())
+}

@@ -1,11 +1,5 @@
 # Dépendances
 node_modules/
-venv/
-env/
-__pycache__/
-*.egg-info/
-dist/
-build/
 
 # Fichiers système
 .DS_Store
@@ -27,23 +21,25 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
-yarn-debug.log*
 
-# Cache
+# Nuxt
+.nuxt/
+.output/
+.data/
+.nitro/
 .cache/
-.pytest_cache/
-.next/
 
 # Build
-/dist
-/build
-/.next
-/out
+dist/
+build/
+
+# Prisma
+prisma/migrations/
+
+# Vercel
+.vercel/
 
 # Misc
-.DS_Store
 *.pem
-.nuxt
-generated/
 package-lock.json
-prisma/migrations/
+generated/
