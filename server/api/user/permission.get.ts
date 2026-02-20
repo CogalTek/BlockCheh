@@ -3,13 +3,15 @@ import { getKindeSessionManager } from '../../utils/session';
 import { prisma } from '../../utils/prisma';
 
 export default defineEventHandler(async (event) => {
-    const user = await kindeClient.getUser(getKindeSessionManager(event));
+    let user;
+    try {
+        user = await kindeClient.getUser(getKindeSessionManager(event));
+    } catch {
+        return { permission: null };
+    }
 
     if (!user) {
-        throw createError({
-            statusCode: 401,
-            statusMessage: 'Non authentifié via Kinde',
-        })
+        return { permission: null };
     }
 
     const dbUser = await prisma.user.findUnique({

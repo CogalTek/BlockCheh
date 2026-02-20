@@ -1,5 +1,6 @@
 import { requireAuth } from '../../utils/authGuard';
 import { prisma } from '../../utils/prisma';
+import { getXrplClient } from '../../utils/xrpl';
 import { Wallet } from 'xrpl';
 
 export default defineEventHandler(async (event) => {
@@ -27,6 +28,11 @@ export default defineEventHandler(async (event) => {
         const wallet = Wallet.generate();
         walletAddress = wallet.address;
         walletSeed = wallet.seed;
+
+        // Financer le wallet via le faucet testnet pour l'activer sur le ledger
+        // Sans financement, le compte n'existe pas et toute transaction échoue avec "Account not found"
+        const client = await getXrplClient();
+        await client.fundWallet(wallet);
 
         await prisma.user.update({
             where: { id: dbUser.id },

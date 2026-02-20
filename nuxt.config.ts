@@ -14,7 +14,6 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: process.env.VERCEL ? 'vercel' : 'node-server',
     experimental: {
       wasm: true,
     }

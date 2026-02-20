@@ -1,6 +1,7 @@
 import { requireWhitelisted } from '../../utils/authGuard';
 import { prisma } from '../../utils/prisma';
 import { getXrplClient, getAdminWallet } from '../../utils/xrpl';
+import { submitTransaction } from '../../utils/submitTx';
 import { Payment, Wallet } from 'xrpl';
 
 export default defineEventHandler(async (event) => {
@@ -31,7 +32,7 @@ export default defineEventHandler(async (event) => {
             Amount: {
                 currency: currencyCode,
                 issuer: adminWallet.address,
-                value: body.amount,
+                value: String(body.amount),
             },
             SendMax: String(Math.round(parseFloat(body.maxXrp || '999999') * 1_000_000)),
         };
@@ -45,14 +46,12 @@ export default defineEventHandler(async (event) => {
             SendMax: {
                 currency: currencyCode,
                 issuer: adminWallet.address,
-                value: body.amount,
+                value: String(body.amount),
             },
         };
     }
 
-    const prepared = await client.autofill(paymentTx);
-    const signed = userWallet.sign(prepared);
-    const result = await client.submitAndWait(signed.tx_blob);
+    const result = await submitTransaction(client, paymentTx as any, userWallet);
 
     // Enregistrer la transaction
     await prisma.transaction.create({
@@ -61,7 +60,7 @@ export default defineEventHandler(async (event) => {
             type: body.direction === 'buy' ? 'AMM_BUY' : 'AMM_SELL',
             assetType: 'TOKEN',
             assetId: currencyCode,
-            amount: body.amount,
+            amount: String(body.amount),
             xrplTxHash: result.result.hash,
         },
     });
@@ -70,7 +69,7 @@ export default defineEventHandler(async (event) => {
         success: true,
         txHash: result.result.hash,
         direction: body.direction,
-        amount: body.amount,
+        amount: String(body.amount),
         currency: currencyCode,
     };
 });

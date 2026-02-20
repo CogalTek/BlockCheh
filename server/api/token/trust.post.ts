@@ -1,6 +1,7 @@
 import { requireWhitelisted } from '../../utils/authGuard';
 import { prisma } from '../../utils/prisma';
 import { getXrplClient, getAdminWallet } from '../../utils/xrpl';
+import { submitTransaction } from '../../utils/submitTx';
 import { TrustSet, Wallet } from 'xrpl';
 
 export default defineEventHandler(async (event) => {
@@ -39,9 +40,7 @@ export default defineEventHandler(async (event) => {
         },
     };
 
-    const prepared = await client.autofill(trustTx);
-    const signed = userWallet.sign(prepared);
-    const result = await client.submitAndWait(signed.tx_blob);
+    const result = await submitTransaction(client, trustTx as any, userWallet);
 
     // Enregistrer la transaction
     await prisma.transaction.create({

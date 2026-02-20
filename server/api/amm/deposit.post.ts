@@ -1,5 +1,6 @@
 import { requireWhitelisted } from '../../utils/authGuard';
 import { getXrplClient, getAdminWallet } from '../../utils/xrpl';
+import { submitTransaction } from '../../utils/submitTx';
 import { AMMDeposit, AMMDepositFlags, Wallet } from 'xrpl';
 
 export default defineEventHandler(async (event) => {
@@ -35,7 +36,7 @@ export default defineEventHandler(async (event) => {
         (ammDepositTx as any).Amount = {
             currency: currencyCode,
             issuer: adminWallet.address,
-            value: body.tokenAmount,
+            value: String(body.tokenAmount),
         };
     }
 
@@ -43,9 +44,7 @@ export default defineEventHandler(async (event) => {
         (ammDepositTx as any).Amount2 = String(Math.round(parseFloat(body.xrpAmount) * 1_000_000));
     }
 
-    const prepared = await client.autofill(ammDepositTx);
-    const signed = userWallet.sign(prepared);
-    const result = await client.submitAndWait(signed.tx_blob);
+    const result = await submitTransaction(client, ammDepositTx as any, userWallet);
 
     return {
         success: true,

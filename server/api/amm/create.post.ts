@@ -1,6 +1,7 @@
 import { requireAdmin } from '../../utils/authGuard';
 import { prisma } from '../../utils/prisma';
 import { getXrplClient, getAdminWallet } from '../../utils/xrpl';
+import { submitTransaction } from '../../utils/submitTx';
 import { AMMCreate, Wallet } from 'xrpl';
 
 export default defineEventHandler(async (event) => {
@@ -22,15 +23,13 @@ export default defineEventHandler(async (event) => {
         Amount: {
             currency: currencyCode,
             issuer: adminWallet.address,
-            value: body.tokenAmount,
+            value: String(body.tokenAmount),
         },
         Amount2: String(Math.round(parseFloat(body.xrpAmount) * 1_000_000)), // XRP en drops
         TradingFee: body.tradingFee || 500, // 0.5% par défaut
     };
 
-    const prepared = await client.autofill(ammCreateTx);
-    const signed = adminWallet.sign(prepared);
-    const result = await client.submitAndWait(signed.tx_blob);
+    const result = await submitTransaction(client, ammCreateTx as any, adminWallet);
 
     return {
         success: true,

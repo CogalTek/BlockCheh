@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
         Amount: {
             currency: currencyCode,
             issuer: adminWallet.address,
-            value: body.amount,
+            value: String(body.amount),
         },
     };
 
@@ -58,7 +58,7 @@ export default defineEventHandler(async (event) => {
                 type: 'TOKEN_SEND',
                 assetType: 'TOKEN',
                 assetId: currencyCode,
-                amount: `-${body.amount}`,
+                amount: `-${String(body.amount)}`,
                 xrplTxHash: result.result.hash,
                 counterparty: body.destination,
             },
@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
                 type: 'TOKEN_RECEIVE',
                 assetType: 'TOKEN',
                 assetId: currencyCode,
-                amount: body.amount,
+                amount: String(body.amount),
                 xrplTxHash: `${result.result.hash}_recv`,
                 counterparty: senderWallet.address,
             },

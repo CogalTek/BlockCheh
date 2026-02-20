@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
             type: 'NFT_SELL_OFFER',
             assetType: 'NFT',
             assetId: body.nftokenId,
-            amount: body.amount,
+            amount: String(body.amount),
             xrplTxHash: result.result.hash,
         },
     });
