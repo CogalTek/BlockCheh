@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:15
-    container_name: blockcheh-postgres-dev
+    container_name: blockcheh-postgres
     ports:
       - "5432:5432"
     environment:
@@ -9,7 +9,35 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-blockcheh}
     volumes:
-      - postgres_data_dev:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-blockcheh}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blockcheh-app
+    ports:
+      - "8080:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-blockcheh}?schema=public"
+      NUXT_KINDE_CLIENT_ID: ${NUXT_KINDE_CLIENT_ID}
+      NUXT_KINDE_CLIENT_SECRET: ${NUXT_KINDE_CLIENT_SECRET}
+      NUXT_KINDE_AUTH_DOMAIN: ${NUXT_KINDE_AUTH_DOMAIN}
+      NUXT_KINDE_REDIRECT_URL: ${NUXT_KINDE_REDIRECT_URL}
+      NUXT_KINDE_LOGOUT_REDIRECT_URL: ${NUXT_KINDE_LOGOUT_REDIRECT_URL}
+      NUXT_KINDE_POST_LOGIN_REDIRECT_URL: ${NUXT_KINDE_POST_LOGIN_REDIRECT_URL}
+      XRPL_ADMIN_SEED: ${XRPL_ADMIN_SEED}
+      XRPL_NETWORK: ${XRPL_NETWORK}
+    command: >
+      sh -c "npx prisma migrate deploy && node .output/server/index.mjs"
 
 volumes:
-  postgres_data_dev:
+  postgres_data:
