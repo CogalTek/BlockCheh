@@ -4,7 +4,7 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm install
 
 # ──────────────────────────────────────────────
 # Stage 2 — Build the Nuxt app + Prisma client
@@ -36,7 +36,7 @@ COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/package-lock.json ./package-lock.json
 
 # Install only production deps + Prisma CLI for migrations
-RUN npm ci --omit=dev && npx prisma --version
+RUN npm install --omit=dev && npx prisma --version
 
 ENV HOST=0.0.0.0
 ENV PORT=3000
