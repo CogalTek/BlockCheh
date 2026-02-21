@@ -16,7 +16,7 @@ export const getKindeSessionManager = (event: H3Event): SessionManager => {
 		async setSessionItem(key: string, value: unknown) {
 			const cookieOptions = {
 				httpOnly: true,
-				secure: process.env.NODE_ENV === 'production',
+				secure: false,
 				sameSite: "lax" as const,
 				maxAge: 60 * 60 * 24 * 7, // 7 jours
 			};
