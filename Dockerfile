@@ -28,6 +28,9 @@ COPY --from=build /app/.output ./.output
 # Copy Prisma schema + migrations (needed for prisma migrate deploy)
 COPY --from=build /app/prisma ./prisma
 
+# Copy Prisma config (needed for prisma migrate deploy in Prisma 7.x)
+COPY --from=build /app/prisma.config.ts ./prisma.config.ts
+
 # Copy the generated Prisma client
 COPY --from=build /app/lib/generated ./lib/generated
 
