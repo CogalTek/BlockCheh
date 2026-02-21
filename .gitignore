@@ -43,3 +43,4 @@ prisma/migrations/
 *.pem
 package-lock.json
 generated/
+.env.prod
