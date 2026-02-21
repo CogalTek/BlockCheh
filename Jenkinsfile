@@ -75,6 +75,7 @@ pipeline {
         }
         success {
             echo '✅ BlockCheh deployed successfully!'
+            sh 'docker image prune -af'
         }
         cleanup {
             // Supprime le fichier .env du workspace
